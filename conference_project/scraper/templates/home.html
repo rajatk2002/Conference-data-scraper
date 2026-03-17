@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* Container */
+.home-container {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 40px 30px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+/* Title */
+.home-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* Subtitle */
+.home-subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Description */
+.home-description {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+/* Hover */
+.home-btn:hover {
+  background: #e9ecef;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Click */
+.home-btn:active {
+  transform: scale(0.97);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-container {
+    margin: 30px 15px;
+    padding: 30px 20px;
+  }
+
+  .home-title {
+    font-size: 26px;
+  }
+}
+
+</style>
+
+<div class="home-container text-center">
+
+    <h1 class="home-title mb-3">Conference Data Scraper</h1>
+
+    <p class="home-subtitle">
+        Extract and manage conference session and poster data efficiently.
+    </p>
+
+    <p class="home-description">
+        This project collects session titles, authors, affiliations, locations, and presentation types 
+        from the SGO 2026 Annual Meeting and stores them in a structured database.
+    </p>
+
+    <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+
+        <a href="/dashboard/" class="home-btn">
+            <span>View Dashboard</span>
+        </a>
+
+        <a href="/records/" class="home-btn">
+            <span>View Records</span>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

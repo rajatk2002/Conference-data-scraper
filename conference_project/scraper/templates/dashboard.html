@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* Header layout */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #e9ecef;
+  color: #000;
+}
+
+.back-btn:active {
+  transform: scale(0.96);
+}
+
+/* Title */
+.dashboard-title {
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Cards */
+.dashboard-card {
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  background: #f8f9fa;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Numbers */
+.card-number {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+/* Labels */
+.card-label {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Accent borders */
+.card-primary {
+  border-left: 5px solid #4e73df;
+}
+
+.card-success {
+  border-left: 5px solid #1cc88a;
+}
+
+.card-warning {
+  border-left: 5px solid #f6c23e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-number {
+    font-size: 26px;
+  }
+}
+
+</style>
+
+<!-- Header -->
+<div class="dashboard-header">
+
+  <a href="/" class="back-btn">
+    <span>Home</span>
+  </a>
+
+  <h2 class="dashboard-title">Dashboard</h2>
+
+</div>
+
+<!-- Cards -->
+<div class="row text-center g-4">
+
+    <div class="col-md-4">
+        <div class="card dashboard-card card-primary">
+            <div class="card-body">
+                <h3 class="card-number">{{ sessions }}</h3>
+                <p class="card-label">Total Sessions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-card card-success">
+            <div class="card-body">
+                <h3 class="card-number">{{ posters }}</h3>
+                <p class="card-label">Total Posters</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-card card-warning">
+            <div class="card-body">
+                <h3 class="card-number">{{ authors }}</h3>
+                <p class="card-label">Total Authors</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
