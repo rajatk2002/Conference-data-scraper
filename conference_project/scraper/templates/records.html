@@ -311,13 +311,13 @@
 
             <ul class="dropdown-menu dropdown-menu-end export-menu">
             <li>
-                <a class="dropdown-item"
+                <a id="exportCsvLink" class="dropdown-item"
                 href="/export/csv/?search={{search_query}}&type={{type_filter}}">
                 Export as CSV
                 </a>
             </li>
             <li>
-                <a class="dropdown-item"
+                <a id="exportExcelLink" class="dropdown-item"
                 href="/export/excel/?search={{search_query}}&type={{type_filter}}">
                 Export as Excel
                 </a>
@@ -410,7 +410,7 @@
 <!-- Bottom Controls -->
 <div class="d-flex justify-content-between align-items-center flex-wrap mt-4">
 
-  <div class="text-muted">
+  <div id="recordsSummary" class="text-muted">
     Showing {{start_index}} – {{end_index}} of {{total_records}} records
   </div>
 
@@ -457,9 +457,22 @@ function clearSearch() {
 
 let timeout = null;
 
+function updateExportLinks(search, type) {
+  const csvLink = document.getElementById("exportCsvLink");
+  const excelLink = document.getElementById("exportExcelLink");
+
+  const encodedSearch = encodeURIComponent(search);
+  const encodedType = encodeURIComponent(type);
+
+  csvLink.href = `/export/csv/?search=${encodedSearch}&type=${encodedType}`;
+  excelLink.href = `/export/excel/?search=${encodedSearch}&type=${encodedType}`;
+}
+
 function fetchRecords() {
   const search = document.getElementById("searchInput").value;
   const type = document.getElementById("typeFilter").value;
+
+  updateExportLinks(search, type);
 
   fetch(`?search=${search}&type=${type}`)
     .then(response => response.text())
@@ -472,6 +485,11 @@ function fetchRecords() {
 
       const newPagination = doc.querySelector(".pagination");
       document.querySelector(".pagination").innerHTML = newPagination.innerHTML;
+
+      const newSummary = doc.querySelector("#recordsSummary");
+      if (newSummary) {
+        document.querySelector("#recordsSummary").innerHTML = newSummary.innerHTML;
+      }
     });
 }
 
@@ -481,6 +499,9 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
 });
 
 document.getElementById("typeFilter").addEventListener("change", fetchRecords);
+
+// set initial export links with current filter values
+updateExportLinks(document.getElementById("searchInput").value, document.getElementById("typeFilter").value);
 
 function clearSearch() {
   document.getElementById("searchInput").value = "";

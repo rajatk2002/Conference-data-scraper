@@ -59,11 +59,7 @@ if errorlevel 1 (
 )
 
 echo [6/8] Ensuring superuser admin/admin exists...
-python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u='admin'; pw='admin'; e='admin@example.com';
-if not User.objects.filter(username=u).exists():
-    User.objects.create_superuser(username=u, email=e, password=pw); print('Created superuser admin')
-else:
-    print('Superuser admin already exists')"
+python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u='admin'; pw='admin'; e='admin@example.com';\nif not User.objects.filter(username=u).exists(): User.objects.create_superuser(username=u, email=e, password=pw); print('Created superuser admin')\nelse: print('Superuser admin already exists')"
 if errorlevel 1 (
     echo WARNING: Failed to create/verify superuser.
 )

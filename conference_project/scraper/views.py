@@ -5,8 +5,19 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 
 import csv
+import re
 import pandas as pd
 from openpyxl import Workbook
+
+
+def _clean_excel_text(value):
+    """Remove control chars that break openpyxl (IllegalCharacterError)."""
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        # keep tab/newline/carriage-return and strip other control characters
+        return re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', value)
+    return value
 
 
 def home(request):
@@ -101,12 +112,12 @@ def export_csv(request):
 
     for record in records:
         writer.writerow([
-            record.session_title,
-            record.session_type,
-            record.date,
-            record.time,
-            record.location,
-            record.authors
+            _clean_excel_text(record.session_title),
+            _clean_excel_text(record.session_type),
+            _clean_excel_text(record.date),
+            _clean_excel_text(record.time),
+            _clean_excel_text(record.location),
+            _clean_excel_text(record.authors)
         ])
 
     return response
@@ -123,12 +134,12 @@ def export_excel(request):
 
     for record in records:
         ws.append([
-            record.session_title,
-            record.session_type,
-            record.date,
-            record.time,
-            record.location,
-            record.authors
+            _clean_excel_text(record.session_title),
+            _clean_excel_text(record.session_type),
+            _clean_excel_text(record.date),
+            _clean_excel_text(record.time),
+            _clean_excel_text(record.location),
+            _clean_excel_text(record.authors)
         ])
 
     response = HttpResponse(
