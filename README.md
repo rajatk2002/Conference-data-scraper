@@ -1,141 +1,154 @@
 # Conference Scraper
 
-A Django-based web project that scrapes conference session and poster data (SGO 2026 meeting) and stores it in a SQLite database. It provides a simple dashboard and record browsing UI, with CSV/Excel export support.
+A Django web scraper that extracts conference session and poster data from the SGO 2026 meeting site and stores it in SQLite. It includes a dashboard, record browsing, search/filter, and CSV/XLSX export.
 
-## Project structure
+## ��� What it does
 
-- `conference_project/` – Django project folder
-  - `conference_project/settings.py` – Django settings
-  - `conference_project/urls.py` – root URL config
-  - `wsgi.py`, etc.
-- `scraper/` – main Django app
-  - `models.py` – `ConferenceItem` model
-  - `scraper.py` – scraping routines (sessions + posters)
-  - `management/commands/run_scraper.py` – CLI command to run all scrapers
-  - `views.py` – dashboard, records + export views
-  - `urls.py` – app routes
-  - `templates/` – HTML templates for home/dashboard/records
-- `db.sqlite3` – SQLite DB created at runtime
-- `requirements.txt` – Python dependencies
+- Scrapes session data via `requests` + `BeautifulSoup`.
+- Scrapes poster details via Selenium Chrome driver + detail page requests.
+- Persists to `scraper.models.ConferenceItem`.
+- UI and export endpoints:
+  - `/` home
+  - `/dashboard/` summary counts
+  - `/records/` filter/paginate
+  - `/export/csv/` and `/export/excel/`
+  - `/admin/`
 
-## Dependencies
+## ��� Code layout
 
+- `conference_project/` (Django project)
+  - `settings.py`, `urls.py`, etc.
+- `scraper/` (Django app)
+  - `models.py` (`ConferenceItem`)
+  - `scraper.py` (scrape logic: `scrape_sessions`, `scrape_posters`, `run_all_scrapers`)
+  - `management/commands/run_scraper.py`
+  - `views.py`, `urls.py`, templates
+- `setup_run.bat` (Windows bootstrap)
+- `db.sqlite3` (local DB; should be ignored)
+
+## ��� Requirements
+
+- Python 3.11+
+- Django==5.0.3
+- requests
+- beautifulsoup4
+- pandas
+- openpyxl
+- lxml
+- selenium
+- webdriver-manager
+
+## ⚙️ Setup (recommended)
+
+The easiest way is the included batch bootstrap command (from repo root):
+
+```powershell
+./Conference-data-scraper/setup_run.bat
 ```
-Django==5.0.3
-requests==2.31.0
-beautifulsoup4==4.12.3
-pandas==2.2.1
-openpyxl==3.1.2
-lxml==6.0.2
-selenium==4.41.0
-webdriver-manager==4.0.1
-```
 
-## Quick setup
+`setup_run.bat` does:
+- Creates + activates virtual environment.
+- Installs dependencies.
+- Applies migrations.
+- Creates default `admin/admin` superuser if missing.
+- Starts server.
 
-1. Clone / copy repository
-2. Create and activate virtual environment
+**Notably**: scraper execution is commented out to avoid automatic runs.
+
+If you want manual setup instead:
 
 ```bash
 python -m venv venv
-# Windows (cmd):
+# Windows cmd
 venv\Scripts\activate
-# Windows (PowerShell):
+# Windows PowerShell
 venv\Scripts\Activate.ps1
-# Unix:
+# macOS/Linux
 source venv/bin/activate
-```
 
-3. Install requirements
-
-```bash
 pip install -r requirements.txt
-```
-
-4. Apply migrations
-
-```bash
 cd conference_project
 python manage.py migrate
 ```
 
-5. (Optional) Create superuser for Django admin
-
+Optional:
 ```bash
 python manage.py createsuperuser
 ```
 
-## Chrome WebDriver note
-
-The poster scraper uses `selenium.webdriver.Chrome`.
-- Install Chrome browser (or use Chromium).
-- `webdriver-manager` should auto-download proper driver with current dependencies.
-- If driver issues appear, install/upgrade manually or use environment settings.
-
-## Run scraper
+## ▶️ Run scraper
 
 From `conference_project/` run:
-
 ```bash
 python manage.py run_scraper
 ```
 
-This executes `run_all_scrapers()` in `scraper/scraper.py`:
-- `scrape_sessions()` (requests + BeautifulSoup)
-- `scrape_posters()` (Selenium + requests + BeautifulSoup)
+This executes `run_all_scrapers()` that calls:
+- `scrape_sessions()`
+- `scrape_posters()`
 
-All results are saved to `scraper.ConferenceItem` in `db.sqlite3`.
-
-## Run web server
+## ▶️ Start web service
 
 ```bash
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/`.
+Open: `http://127.0.0.1:8000/`
 
-Routes:
-- `/` – Home page
-- `/dashboard/` – counts of sessions/posters/authors
-- `/records/` – searchable/paginated list of records
-- `/export/csv/` – CSV export of conference data
-- `/export/excel/` – XLSX export of conference data
-- `/admin/` – Django admin (if superuser configured)
+## ��� Main app routes
 
-## Usage
+- `/` home
+- `/dashboard/` session/poster counts
+- `/records/` list/search/paginate
+- `/export/csv/` CSV download
+- `/export/excel/` XLSX download
+- `/admin/` Django admin
 
-1. Run scraper first (`python manage.py run_scraper`).
-2. Start server (`python manage.py runserver`).
-3. Navigate to dashboard to confirm row counts.
-4. Use records for filtering and exports.
-5. In records page, set search terms, session/poster filter, page size and pagination.
+## ℹ️ Data model (`ConferenceItem`)
 
-## Data model (`ConferenceItem`)
+Includes fields like:
+- `session_title`, `session_type`, `poster_title`
+- `authors`, `affiliations`
+- `date`, `time`, `location`, `session_category`, `presentation_type`
+- `description`, `created_at`
 
-Fields:
-- `session_title` (text)
-- `session_type` (`Session`/`Poster`)
-- `poster_title`, `authors`, `affiliations`
-- `date`, `time`, `location`, `session_category`, `presentation_type`, `description`
-- `created_at` timestamp
+## ���️ Summary of scraper logic
 
-## Testing
+- `scrape_sessions()`:
+  - fetch agenda page
+  - parse `ul#agenda li`
+  - fetch detail pages for date/time/location/category
+  - dedupe by `session_title`, `date`, `time`
 
-No dedicated tests defined yet. Quick manual tests:
-1. `python manage.py run_scraper` success output
-2. Browse `/dashboard/` returns counts
-3. `/records/?search=WXYZ` works
-4. Export endpoints download files
+- `scrape_posters()`:
+  - launch Chrome webdriver
+  - parse `li.poster50x100` list
+  - fetch each poster detail page
+  - build record fields
+  - dedupe by `poster_title`, `date`, `time`
 
-## Troubleshooting
+## ��� Testing / verification
 
-- If `selenium` fails: verify Chrome version + matching driver.
-- If no records appear: re-run scraper, check console logs for errors.
-- If `module not found`: double-check virtualenv and `pip install -r requirements.txt`.
+- `python manage.py run_scraper` should complete with logs and saved rows.
+- Browse `/dashboard/` for counts.
+- Browse `/records/`, filter/search/pagination.
+- `/export/csv/` and `/export/excel/` return files.
 
-## Contribution
+## ��� Git cleanliness (recommended)
 
-- Add more field extraction in `scraper/scraper.py`.
-- Add robust error handling and retry logic for network failures.
-- Create unit tests under `scraper/tests.py`.
-- Add CI lint/test scripts.
+Add to `.gitignore`:
+```
+__pycache__/
+*.pyc
+db.sqlite3
+```
+Then remove tracked artifacts:
+```bash
+git rm --cached db.sqlite3
+git rm -r --cached conference_project/**/__pycache__
+```
+
+## ��� Notes
+
+- Selenium requires Chrome/Chromium + compatible driver (webdriver-manager handles auto-install usually).
+- If poster scrape hangs or breaks, run session-only mode by temporarily changing `run_scraper` logic.
