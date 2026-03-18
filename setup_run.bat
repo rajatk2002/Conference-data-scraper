@@ -10,6 +10,9 @@ echo ========================
 echo Conference Scraper Setup
 echo ========================
 
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
+
 echo [1/8] Checking Python...
 python --version >nul 2>&1
 if errorlevel 1 (
@@ -48,7 +51,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-cd conference_project
+echo [4.1/8] Changing to Django project directory...
+cd /d "%SCRIPT_DIR%conference_project"
 
 echo [5/8] Applying Django migrations...
 python manage.py migrate --noinput
