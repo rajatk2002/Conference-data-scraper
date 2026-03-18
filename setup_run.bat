@@ -62,11 +62,11 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [6/8] Ensuring superuser admin/admin exists...
-python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u='admin'; pw='admin'; e='admin@example.com';\nif not User.objects.filter(username=u).exists(): User.objects.create_superuser(username=u, email=e, password=pw); print('Created superuser admin')\nelse: print('Superuser admin already exists')"
-if errorlevel 1 (
-    echo WARNING: Failed to create/verify superuser.
-)
+@REM echo [6/8] Ensuring superuser admin/admin exists...
+@REM python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u='admin'; pw='admin'; e='admin@example.com';\nif not User.objects.filter(username=u).exists(): User.objects.create_superuser(username=u, email=e, password=pw); print('Created superuser admin')\nelse: print('Superuser admin already exists')"
+@REM if errorlevel 1 (
+@REM     echo WARNING: Failed to create/verify superuser.
+@REM )
 
 @REM echo [7/8] Running data scraper (sessions + posters)...
 @REM python manage.py run_scraper
@@ -76,7 +76,7 @@ if errorlevel 1 (
 @REM     exit /b 1
 @REM )
 
-echo [7/8] Starting Django development server on http://127.0.0.1:8000
+echo [6/8] Starting Django development server on http://127.0.0.1:8000
 python manage.py runserver
 
 endlocal
