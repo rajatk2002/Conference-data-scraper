@@ -68,15 +68,15 @@ if errorlevel 1 (
     echo WARNING: Failed to create/verify superuser.
 )
 
-echo [7/8] Running data scraper (sessions + posters)...
-python manage.py run_scraper
-if errorlevel 1 (
-    echo ERROR: Scraper command failed.
-    pause
-    exit /b 1
-)
+@REM echo [7/8] Running data scraper (sessions + posters)...
+@REM python manage.py run_scraper
+@REM if errorlevel 1 (
+@REM     echo ERROR: Scraper command failed.
+@REM     pause
+@REM     exit /b 1
+@REM )
 
-echo [8/8] Starting Django development server on http://127.0.0.1:8000
+echo [7/8] Starting Django development server on http://127.0.0.1:8000
 python manage.py runserver
 
 endlocal
